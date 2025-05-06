@@ -20,10 +20,10 @@ def post_to_x(text, image_path):
         os.getenv("X_API_KEY"), os.getenv("X_API_SECRET"),
         os.getenv("X_ACCESS_TOKEN"), os.getenv("X_ACCESS_TOKEN_SECRET"))
     upload = requests.post("https://upload.twitter.com/1.1/media/upload.json",
-                           files={'media': open(image_path, 'rb')}, auth=auth)
+        files={'media': open(image_path, 'rb')}, auth=auth)
     media_id = upload.json()['media_id_string']
     post = requests.post("https://api.twitter.com/1.1/statuses/update.json",
-                         data={'status': text, 'media_ids': media_id}, auth=auth)
+        data={'status': text, 'media_ids': media_id}, auth=auth)
     print("X:", post.status_code, post.text)
 
 def post_to_bluesky(text, image_path):
@@ -45,8 +45,9 @@ def main():
     parser.add_argument("--bluesky", action="store_true")
     parser.add_argument("--substack", action="store_true")
     parser.add_argument("--all", action="store_true")
-        parser.add_argument('--fb-audience', choices=['public', 'friends'], default='public', help='Facebook audience setting')
-args = parser.parse_args()
+    parser.add_argument('--fb-audience', choices=['public', 'friends'], default='public', help='Facebook audience setting')
+
+    args = parser.parse_args()
 
     if not args.image and not args.substack:
         print("Image required for selected platforms.")
