@@ -16,7 +16,7 @@ def post_to_facebook(text, image_path, audience='public'):
         r = requests.post(url, 
         files={'source': img}, 
         data={'access_token': token, 'caption': text, 'privacy': str(privacy)})
-        
+
     print("Facebook:", r.status_code, r.text)
 
 def post_to_x(text, image_path):
