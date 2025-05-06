@@ -1,0 +1,15 @@
+[project]
+name = "post-it"
+version = "0.1.0"
+description = "CLI tool to post images and text to social media platforms"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+readme = "README.md"
+dependencies = [
+    "requests",
+    "requests_oauthlib",
+    "python-dotenv",
+    "atproto"
+]
+
+[project.scripts]
+post-it = "post_it.cli:main"
