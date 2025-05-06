@@ -10,20 +10,33 @@ def post_to_facebook(text, image_path, audience='public'):
     token = os.getenv("FB_ACCESS_TOKEN")
     page_id = os.getenv("FB_PAGE_ID")
     url = f"https://graph.facebook.com/{page_id}/photos"
+
     with open(image_path, 'rb') as img:
         privacy = {'value': 'ALL_FRIENDS' if audience == 'friends' else 'EVERYONE'}
-        r = requests.post(url, files={'source': img}, data={'access_token': token, 'caption': text, 'privacy': str(privacy)})
+        r = requests.post(url, 
+        files={'source': img}, 
+        data={'access_token': token, 'caption': text, 'privacy': str(privacy)})
+        
     print("Facebook:", r.status_code, r.text)
 
 def post_to_x(text, image_path):
     auth = OAuth1(
-        os.getenv("X_API_KEY"), os.getenv("X_API_SECRET"),
-        os.getenv("X_ACCESS_TOKEN"), os.getenv("X_ACCESS_TOKEN_SECRET"))
-    upload = requests.post("https://upload.twitter.com/1.1/media/upload.json",
+        os.getenv("X_API_KEY"), 
+        os.getenv("X_API_SECRET"),
+        os.getenv("X_ACCESS_TOKEN"), 
+        os.getenv("X_ACCESS_TOKEN_SECRET"))
+    
+    upload = requests.post(
+        "https://upload.twitter.com/1.1/media/upload.json",
         files={'media': open(image_path, 'rb')}, auth=auth)
+    
     media_id = upload.json()['media_id_string']
-    post = requests.post("https://api.twitter.com/1.1/statuses/update.json",
-        data={'status': text, 'media_ids': media_id}, auth=auth)
+
+    post = requests.post(
+        "https://api.twitter.com/1.1/statuses/update.json",
+        data={'status': text, 'media_ids': media_id}, 
+        auth=auth)
+    
     print("X:", post.status_code, post.text)
 
 def post_to_bluesky(text, image_path):
