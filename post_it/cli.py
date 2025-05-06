@@ -6,12 +6,13 @@ from dotenv import load_dotenv
 from requests_oauthlib import OAuth1
 from atproto import Client as BlueskyClient
 
-def post_to_facebook(text, image_path):
+def post_to_facebook(text, image_path, audience='public'):
     token = os.getenv("FB_ACCESS_TOKEN")
     page_id = os.getenv("FB_PAGE_ID")
     url = f"https://graph.facebook.com/{page_id}/photos"
     with open(image_path, 'rb') as img:
-        r = requests.post(url, files={'source': img}, data={'access_token': token, 'caption': text})
+        privacy = {'value': 'ALL_FRIENDS' if audience == 'friends' else 'EVERYONE'}
+        r = requests.post(url, files={'source': img}, data={'access_token': token, 'caption': text, 'privacy': str(privacy)})
     print("Facebook:", r.status_code, r.text)
 
 def post_to_x(text, image_path):
@@ -44,14 +45,15 @@ def main():
     parser.add_argument("--bluesky", action="store_true")
     parser.add_argument("--substack", action="store_true")
     parser.add_argument("--all", action="store_true")
-    args = parser.parse_args()
+        parser.add_argument('--fb-audience', choices=['public', 'friends'], default='public', help='Facebook audience setting')
+args = parser.parse_args()
 
     if not args.image and not args.substack:
         print("Image required for selected platforms.")
         sys.exit(1)
 
     if args.all or args.facebook:
-        post_to_facebook(args.text, args.image)
+        post_to_facebook(args.text, args.image, args.fb_audience)
     if args.all or args.x:
         post_to_x(args.text, args.image)
     if args.all or args.bluesky:
