@@ -6,18 +6,18 @@ from dotenv import load_dotenv
 from requests_oauthlib import OAuth1
 from atproto import Client as BlueskyClient
 
-# def post_to_facebook(text, image_path, audience='public'):
-#     token = os.getenv("FB_ACCESS_TOKEN")
-#     page_id = os.getenv("FB_PAGE_ID")
-#     url = f"https://graph.facebook.com/{page_id}/photos"
+def post_to_facebook(text, image_path, audience='public'):
+    token = os.getenv("FB_ACCESS_TOKEN")
+    page_id = os.getenv("FB_PAGE_ID")
+    url = f"https://graph.facebook.com/{page_id}/photos"
 
-#     with open(image_path, 'rb') as img:
-#         privacy = {'value': 'ALL_FRIENDS' if audience == 'friends' else 'EVERYONE'}
-#         r = requests.post(url, 
-#         files={'source': img}, 
-#         data={'access_token': token, 'caption': text, 'privacy': str(privacy)})
+    with open(image_path, 'rb') as img:
+        privacy = {'value': 'ALL_FRIENDS' if audience == 'friends' else 'EVERYONE'}
+        r = requests.post(url, 
+        files={'source': img}, 
+        data={'access_token': token, 'caption': text, 'privacy': str(privacy)})
 
-#     print("Facebook:", r.status_code, r.text)
+    print("Facebook:", r.status_code, r.text)
 
 def post_to_x(text, image_path):
     auth = OAuth1(
@@ -45,31 +45,26 @@ def post_to_bluesky(text, image_path):
     client.send_post(text=text, embed_image_path=image_path)
     print("BlueSky: Post successful")
 
-def post_to_substack(text):
-    print("Substack (simulated):", text[:60] + "...")
-
 def main():
     load_dotenv()
     parser = argparse.ArgumentParser(description="Post to social media from the CLI.")
     parser.add_argument("text", help="Text of the post")
     parser.add_argument("-i", "--image", help="Image file path (required for most services)")
-    # parser.add_argument("--facebook", action="store_true")
+    parser.add_argument("--facebook", action="store_true")
     parser.add_argument("--x", action="store_true")
     parser.add_argument("--bluesky", action="store_true")
-    parser.add_argument("--substack", action="store_true")
     parser.add_argument("--all", action="store_true")
-    # parser.add_argument('--fb-audience', choices=['public', 'friends'], default='public', help='Facebook audience setting')
+    parser.add_argument('--fb-audience', choices=['public', 'friends'], default='public', help='Facebook audience setting')
 
     args = parser.parse_args()
 
     if not args.image and not args.substack:
         print("Image required for selected platforms.")
         sys.exit(1)
-    # if args.all or args.facebook:
-    #     post_to_facebook(args.text, args.image, args.fb_audience)
+    if args.all or args.facebook:
+        post_to_facebook(args.text, args.image, args.fb_audience)
     if args.all or args.x:
         post_to_x(args.text, args.image)
     if args.all or args.bluesky:
         post_to_bluesky(args.text, args.image)
-    if args.all or args.substack:
-        post_to_substack(args.text)
+

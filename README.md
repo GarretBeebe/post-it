@@ -43,7 +43,6 @@ post-it "Just BlueSky" -i img.jpg --bluesky
 - Facebook Pages (via Graph API)
 - X (Twitter v1.1 API)
 - BlueSky (via AT Protocol)
-- Substack (simulated, no API)
 
 ## License
 
